@@ -365,16 +365,33 @@ export function getAllActiveGames(): Game[] {
   return games.filter(game => game.isActive)
 }
 
-// Simulate player ID verification
-export function verifyPlayerId(playerId: string): { success: boolean; playerName?: string } {
+// Simulate player ID verification - Always works for valid IDs
+export function verifyPlayerId(playerId: string, zoneId?: string): { success: boolean; playerName?: string } {
+  // Check if ID is in mock database first
   const name = mockPlayerNames[playerId]
   if (name) {
     return { success: true, playerName: name }
   }
-  // For demo purposes, generate a random name for any ID
-  if (playerId.length >= 6) {
-    return { success: true, playerName: `Player_${playerId.slice(-4)}` }
+  
+  // For any ID with at least 5 digits, generate a realistic player name
+  if (playerId.length >= 5 && /^\d+$/.test(playerId)) {
+    // Generate different name styles based on ID
+    const lastDigits = playerId.slice(-4)
+    const nameStyles = [
+      `Player${lastDigits}`,
+      `Gamer_${lastDigits}`,
+      `Pro${lastDigits}`,
+      `King${lastDigits}`,
+      `Master${lastDigits}`,
+      `Legend${lastDigits}`,
+      `Hero${lastDigits}`,
+      `Star${lastDigits}`,
+    ]
+    const selectedName = nameStyles[parseInt(lastDigits) % nameStyles.length]
+    return { success: true, playerName: selectedName }
   }
+  
+  // Invalid ID format
   return { success: false }
 }
 
